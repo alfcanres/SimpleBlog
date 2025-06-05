@@ -1,0 +1,18 @@
+﻿@model PostReadDTO
+
+@{
+    ViewData["Title"] = "Publish Post";
+}
+
+<div>
+    Are you sure you want to publish this?
+</div>
+
+<partial name="_ValidationSummary" model=@ViewData />
+<form asp-action="Publish" method="post">
+    <partial name="_PostRead" model=@Model />
+    
+    <button type="submit" class="btn btn-success">Publish</button>
+
+    <a asp-controller="Post" asp-action="MyPosts" class="btn btn-secondary">Cancel</a>
+</form>

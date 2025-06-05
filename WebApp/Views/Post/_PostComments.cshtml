@@ -1,0 +1,34 @@
+﻿@model IEnumerable<PostCommentReadDTO>
+@{
+    ViewData["Title"] = "Comments";
+}
+
+
+
+
+@if (Model.Count() <= 0)
+{
+    <partial name="_NoResults" />
+}
+else
+{
+
+    @foreach (var item in Model)
+    {
+
+        <div class="card" style="width: 18rem;">
+            <img src="@item.ProfilePicture" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">@item.ApplicationUserInfoId</h5>
+                <p class="card-text">@item.CommentText</p>
+            </div>
+            <div class="card-footer text-muted">
+                @item.CommentDate.ToShortDateString()
+            </div>
+        </div>
+    }
+
+}
+
+
+

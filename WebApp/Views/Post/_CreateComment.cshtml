@@ -1,0 +1,31 @@
+﻿@model PostCommentCreateDTO
+
+@{
+    ViewData["Title"] = "Create Comment";
+}
+
+<div class="alert alert-danger" style="display:none;" id="divValidationSummaryContainer">
+    <ul id="CommentValidationSummary">
+
+  
+    </ul>
+</div>
+<h1>Submit Comment</h1>
+
+<form asp-action="CreateComment" method="post" id="CommentForm">
+
+    <input type="hidden" asp-for="PostId" id="PostId" />
+
+    <input type="hidden" asp-for="ApplicationUserInfoId" id="ApplicationUserInfoId" />
+
+
+    <div class="form-group">
+        <label asp-for="CommentText">Text</label>
+        <textarea asp-for="CommentText" class="form-control" id="CommentText"></textarea>
+        <span asp-validation-for="CommentText" class="text-danger" id="CommentTextValidate"></span>
+    </div>
+
+
+    <button type="button" class="btn btn-primary" onclick="fnCreateComment();" id="btnSubmitComment">Submit Comment</button>
+
+</form>

@@ -1,0 +1,44 @@
+﻿@model PostUpdateDTO
+
+@{
+    ViewData["Title"] = "Edit Post";
+}
+
+<partial name="_ValidationSummary" model=@ViewData />
+
+<form asp-action="Edit" method="post">
+
+    <input asp-for="ApplicationUserInfoId" type="hidden" />
+
+    <div class="form-group">
+        <label asp-for="Title">Title</label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PostTypeId">Type</label>
+        <select asp-for="PostTypeId" asp-items="@ViewBag.PostTypes" class="form-control">
+            <option value="">--SELECT--</option>
+        </select>
+        <span asp-validation-for="PostTypeId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="MoodTypeId">Mood</label>
+        <select asp-for="MoodTypeId" asp-items="@ViewBag.MoodTypes" class="form-control">
+            <option value="">--SELECT--</option>
+        </select>
+        <span asp-validation-for="PostTypeId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Text">Text</label>
+        <textarea asp-for="Text" class="form-control"></textarea>
+        <span asp-validation-for="Text" class="text-danger"></span>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-controller="Post" asp-action="MyPosts" class="btn btn-secondary">Cancel</a>
+</form>

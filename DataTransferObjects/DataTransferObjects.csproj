@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Interfaces\IPagerDTO.cs" />
+    <Compile Remove="Interfaces\IResponseDTO.cs" />
+    <Compile Remove="Interfaces\IResponseListDTO.cs" />
+    <Compile Remove="Interfaces\IResponsePagedListDTO.cs" />
+    <Compile Remove="Interfaces\ITokenResponse.cs" />
+    <Compile Remove="Interfaces\IValidate.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
+
+</Project>

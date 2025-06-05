@@ -1,0 +1,84 @@
+﻿@model PagerViewModel
+
+@if (Model.PageCount > 1)
+{
+    <nav aria-label="Page navigation ">
+        <ul class="pagination">
+
+            @if (Model.CurrentPage == 1)
+            {
+                <li class="page-item disabled">
+                    <a class="page-link">Previous</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+
+                    <a class="page-link"
+                       asp-area=""
+                       asp-controller="@Model.Controller"
+                       asp-action="@Model.Action"
+                       asp-route-currentpage="@(Model.CurrentPage-1)"
+                       asp-route-recordsperpage="@Model.RecordsPerPage"
+                       asp-route-searchkeyword="@Model.SearchKeyWord?.Trim()">Previous</a>
+
+                </li>
+
+
+
+            }
+
+
+            @for (int i = 1; i < Model.PageCount + 1; i++)
+            {
+                if (i == Model.CurrentPage)
+                {
+                    <li class="page-item active" aria-current="page">
+                        <a class="page-link" href="#">@i</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item">
+
+
+                        <a class="page-link"
+                           asp-area=""
+                           asp-controller="@Model.Controller"
+                           asp-action="@Model.Action"
+                           asp-route-currentpage="@i"
+                           asp-route-recordsperpage="@Model.RecordsPerPage"
+                           asp-route-searchkeyword="@Model.SearchKeyWord?.Trim()">@i</a>
+
+                    </li>
+
+                }
+            }
+
+            @if (Model.CurrentPage == Model.PageCount)
+            {
+                <li class="page-item disabled">
+                    <a class="page-link">Next</a>
+                </li>
+            }
+            else
+            {
+
+                <li class="page-item">
+
+                    <a class="page-link"
+                       asp-area=""
+                       asp-controller="@Model.Controller"
+                       asp-action="@Model.Action"
+                       asp-route-currentpage="@(Model.CurrentPage+1)"
+                       asp-route-recordsperpage="@Model.RecordsPerPage"
+                       asp-route-searchkeyword="@Model.SearchKeyWord?.Trim()">Next</a>
+
+                </li>
+
+            }
+
+        </ul>
+    </nav>
+}

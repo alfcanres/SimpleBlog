@@ -1,0 +1,55 @@
+﻿@model NavbarViewModel
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                @if (Model.ShowCreateNewButton)
+                {
+                    <li class="nav-item">
+                        <a asp-action="Create" class="btn btn-primary">Create new</a>
+                    </li>
+                }
+
+            </ul>
+            <form asp-action="Index" method="get" class="d-flex">
+
+                <input class="form-control me-2" id="searchkeyword" name="searchkeyword" type="search" placeholder="Search" aria-label="Search" value="@Model.SearchKeyWord" />
+
+                <input type="hidden" id="recordsperpage" name="recordsperpage" value="@Model.RecordsPerPage" />
+
+                <input type="hidden" id="currentpage" name="currentpage" value="1" />
+
+                <button class="btn btn-outline-success" type="submit">Search</button>
+
+
+
+            </form>
+        </div>
+    </div>
+</nav>
+
+@if (!String.IsNullOrEmpty(Model.SearchKeyWord?.Trim()))
+{
+    <div clas="row">
+        <div class="col"></div>
+        <div class="col text-center">
+            <h3>Search result for "@Model.SearchKeyWord"</h3>
+            <a class="btn btn-outline-secondary"
+               asp-area=""
+               asp-action="Index"
+               asp-route-currentpage="1"
+               asp-route-recordsperpage="@Model.RecordsPerPage"
+               asp-route-searchkeyword="">Clear search list</a>
+        </div>
+        <div class="col"></div>
+
+    </div>
+
+}
