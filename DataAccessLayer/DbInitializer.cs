@@ -17,7 +17,7 @@ public static class DbInitializer
         UserManager<IdentityUser> userManager,
         RoleManager<IdentityRole> roleManager)
     {
-
+        
 
         // Optionally create a default role
         string roleName = adminRole;
@@ -56,11 +56,12 @@ public static class DbInitializer
         bool createPostTypes,
         IEnumerable<string> postTypes)
     {
-        if (createPostTypes && moodTypes == null)
-            throw new ArgumentNullException(nameof(moodTypes), "Mood types cannot be null when creating post types.");
+        //Moving this validation to InitialDataOptionsValidator class
+        //if (createPostTypes && moodTypes == null)
+        //    throw new ArgumentNullException(nameof(moodTypes), "Mood types cannot be null when creating post types.");
 
-        if (createmoodTypes && postTypes == null)
-            throw new ArgumentNullException(nameof(postTypes), "Post types cannot be null when creating mood types.");
+        //if (createmoodTypes && postTypes == null)
+        //    throw new ArgumentNullException(nameof(postTypes), "Post types cannot be null when creating mood types.");
 
         if (createmoodTypes)
             foreach (var mood in moodTypes)
@@ -100,8 +101,9 @@ public static class DbInitializer
         )
     {
 
-        if (dummyUserCount > 0 && (dummyNames == null || dummyLastNames == null))
-            throw new ArgumentNullException("Dummy names and last names cannot be null when creating dummy users.");
+        //Moving this validation to InitialDataOptionsValidator class
+        //if (dummyUserCount > 0 && (dummyNames == null || dummyLastNames == null))
+        //    throw new ArgumentNullException("Dummy names and last names cannot be null when creating dummy users.");
 
         for (int i = 0; i < dummyUserCount; i++)
         {
@@ -151,8 +153,9 @@ public static class DbInitializer
         IEnumerable<string> dummyPostTitles,
         IEnumerable<string> dummyPostContents)
     {
-        if (dummyPostCount <= 0 || (dummyPostTitles == null && dummyPostContents == null))
-            throw new ArgumentException("Dummy post count must be greater than zero and titles/contents cannot be null.");
+        //Moving this validation to InitialDataOptionsValidator class
+        //if (dummyPostCount <= 0 || (dummyPostTitles == null && dummyPostContents == null))
+        //    throw new ArgumentException("Dummy post count must be greater than zero and titles/contents cannot be null.");
 
         var users = await appDbContext.ApplicationUsers.ToListAsync();
 

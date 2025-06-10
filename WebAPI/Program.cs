@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -23,10 +24,19 @@ builder.Logging.AddConfiguration(configuration.GetSection("Logging"));
 builder.Logging.AddDebug();
 builder.Logging.AddConsole();
 
+
+
 builder.Services.Configure<JwtAppOptions>(configuration.GetSection("JwtAppOptions"));
 
 // Configure Initial Data Options
-builder.Services.Configure<InitialDataOptions>(configuration.GetSection("InitialData"));
+builder.Services.AddSingleton<
+    IValidateOptions<InitialDataOptions>, 
+    InitialDataOptionsValidator>(); // <-- Register the validator for InitialDataOptions
+builder.Services.AddOptions<InitialDataOptions>()
+    .Bind(configuration.GetSection("InitialData"))
+    .ValidateOnStart(); //<-- Validate options on application start
+//builder.Services.Configure<InitialDataOptions>(configuration.GetSection("InitialData"));<-- This line is not needed anymore since we are using IValidateOptions
+
 
 
 //Disable model validation
