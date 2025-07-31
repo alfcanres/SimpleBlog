@@ -21,6 +21,11 @@ namespace BusinessLogicLayer.BusinessObjects
         {
             var baseQuery = unitOfWork.Posts
                  .Query()
+                .Include(t => t.MoodType)
+                .Include(t => t.PostType)
+                .Include(t => t.ApplicationUserInfo)
+                .Include(t => t.Comments)
+                .Include(t => t.Votes)
                  .AsNoTracking();
 
             if (!String.IsNullOrEmpty(pager.SearchKeyWord))

@@ -5,7 +5,11 @@
 
 @if (Model.Status == ResponseStatus.Success)
 {
-    <partial name="_SearchNavbar" model="new NavbarViewModel(){ RecordsPerPage = Model.Content.RecordsPerPage, SearchKeyWord = Model.Content.SearchKeyWord,ShowCreateNewButton = true }" />
+
+    var navBarViewModel = (NavbarViewModel)ViewBag.NavBarModel;
+
+
+    <partial name="_SearchNavbar" model="@navBarViewModel" />
 
     if (Model.Content.List.Count() <= 0)
     {
@@ -16,21 +20,16 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th scope="col">Title</th>
-                    <th scope="col">Author</th>
-                    <th scope="col">Type</th>
-                    <th scope="col">Mood</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Votes</th>
-                    <th scope="col">Comments</th>
-                    <th scope="col">Read</th>
+                <th scope="col">Title</th>
+                <th scope="col">Type / Mood</th>
+    
+                <th scope="col">Votes / Comments</th>
+                <th scope="col"></th>
 
-                    @if (ViewBag.IsAuthor)
-                    {
-                        <th scope="col">Edit</th>
-                        <th scope="col">Delete</th>
-                        <th scope="col">Publish</th>
-                    }
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col">Published</th>
+                   
                 </tr>
             </thead>
             <tbody>
@@ -38,25 +37,14 @@
                 {
                     <tr>
                         <td>@item.Title</td>
-                        <td>@item.UserName</td>
-                        <td>@item.PostType</td>
-                        <td>@item.MoodType</td>
-
                         <td>
-
-                            @if (item.IsPublished)
-                            {
-                                <span class="badge bg-success">Published @item.PublishDate.ToString()</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-warning">Draft</span>
-                            }
-
+                            <span class="badge rounded-pill @WebApp.Helpers.General.GetPillBadgeColor(item.PostType)">@item.MoodType @item.PostType</span>
                         </td>
 
-                        <td>@item.Votes</td>
-                        <td>@item.Comments</td>
+
+
+
+                        <td>@item.Votes / @item.Comments</td>
 
 
                         <td>
@@ -103,7 +91,8 @@
                             }
                             else
                             {
-                                <span class="badge bg-success">Published</span>
+                                <span>Published  @WebApp.Helpers.General.ToFriendlyDate(item.PublishDate.Value)</span>
+
                             }
                         </td>
 
@@ -122,7 +111,7 @@
                 SearchKeyWord = Model.Content.SearchKeyWord,
                 PageCount = Model.Content.PageCount,
                 CurrentPage = Model.Content.CurrentPage,
-                Action = ViewBag.Action,
+                Action = "MyPosts",
                 Controller = "Post"
                 }' />
 

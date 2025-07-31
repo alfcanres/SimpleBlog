@@ -1,13 +1,62 @@
-﻿
-@model ResponseViewModel<ResponsePagedList<PostListDTO>>
+﻿@model ResponseViewModel<ResponsePagedList<PostListDTO>>
 @{
     ViewData["Title"] = "Posts";
 }
 
+@section Scripts {
+    <script>
+        let currentPage = @Model.Content.CurrentPage;
+        const pageCount = @Model.Content.PageCount;
+        let loading = false;
+
+        window.onscroll = async function() {
+            if (loading) return;
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) {
+                if (currentPage >= pageCount) return;
+                loading = true;
+                currentPage++;
+                document.getElementById('loadingSpinner').style.display = 'block';
+                try {
+                    const response = await fetch('@Url.Action("LoadMore", "Post")?page=' + currentPage);
+                    if (response.ok) {
+                        const html = await response.text();
+                        document.getElementById('post-list-body').insertAdjacentHTML('beforeend', html);
+                    }
+                } finally {
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    loading = false;
+                }
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.body.addEventListener('click', async function (e) {
+                if (e.target.classList.contains('btn-show-comments')) {
+                    const postId = e.target.getAttribute('data-post-id');
+                    const modalBody = document.getElementById('postModalBody');
+                    modalBody.innerHTML = '<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>';
+                    try {
+                        const response = await fetch('@Url.Action("View", "Post")/' + postId, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                        if (response.ok) {
+                            const html = await response.text();
+                            modalBody.innerHTML = html;
+                        } else {
+                            modalBody.innerHTML = '<div class="alert alert-danger">Failed to load post details.</div>';
+                        }
+                    } catch {
+                        modalBody.innerHTML = '<div class="alert alert-danger">Failed to load post details.</div>';
+                    }
+                }
+            });
+        });
+    </script>
+}
+<div id="loadingSpinner" style="display:none;text-align:center;">
+    <div class="spinner-border" role="status"></div>
+</div>
 
 @if (Model.Status == ResponseStatus.Success)
 {
-    <partial name="_SearchNavbar" model="new NavbarViewModel(){ RecordsPerPage = Model.Content.RecordsPerPage, SearchKeyWord = Model.Content.SearchKeyWord,ShowCreateNewButton = true }" />
 
     if (Model.Content.List.Count() <= 0)
     {
@@ -15,54 +64,25 @@
     }
     else
     {
-        <table class="table table-hover">
+        <table class="table table-borderless">
             <thead>
                 <tr>
-                    <th scope="col">Title</th>
-                    <th scope="col">Author</th>
-                    <th scope="col">Type</th>
-                    <th scope="col">Mood</th>
-                    <th scope="col">Votes</th>
-                    <th scope="col">Comments</th>
-                    <th scope="col">View</th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="post-list-body">
                 @foreach (var item in Model.Content.List)
                 {
                     <tr>
-                        <td>@item.Title</td>
-                        <td>@item.UserName</td>
-                        <td>@item.PostType</td>
-                        <td>@item.MoodType</td>
-                        <td>@item.Votes</td>
-                        <td>@item.Comments</td>
-
-                        <td>
-
-                            <a class="btn btn-primary"
-                               asp-area=""
-                               asp-controller="Post"
-                               asp-action="View"
-                               asp-route-id="@item.Id">View</a>
-
-
+                        <td class="text-center align-middle">
+                            <div style="display: inline-block;">
+                                <partial name="_PostCard" model="@item" />
+                            </div>
                         </td>
                     </tr>
                 }
-
             </tbody>
         </table>
-
-
-        <partial name="_Pager" model='new PagerViewModel{
-                RecordsPerPage = Model.Content.RecordsPerPage,
-                SearchKeyWord = Model.Content.SearchKeyWord,
-                PageCount = Model.Content.PageCount,
-                CurrentPage = Model.Content.CurrentPage,
-                Action = "Index",
-                Controller = "Post"
-                }' />
 
     }
 
@@ -72,3 +92,19 @@ else
     <partial name="_ErrorAlert" model="@Model.MessageList" />
 }
 
+
+<div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="postModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="postModalBody">
+                <div class="text-center p-5">
+                    <div class="spinner-border" role="status"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
