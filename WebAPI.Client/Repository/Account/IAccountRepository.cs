@@ -9,5 +9,6 @@ namespace WebAPI.Client.Repository.Account
         Task<ResponseViewModel<TokenResponse>> LoginAsync(AccountSignInDTO loginViewModel);
         Task<ResponseViewModel<TokenResponse>> RefreshToken(string expiredToken);
         Task<ResponseViewModel<bool>> RegisterAsync(AccountCreateDTO createModel);
+        Task<ResponseViewModel<bool>> UpdatePasswordAsync(AccountChangePasswordDTO model);
     }
 }

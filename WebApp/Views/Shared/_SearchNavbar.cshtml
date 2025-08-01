@@ -18,7 +18,7 @@
                 }
 
             </ul>
-            <form asp-action="Index" method="get" class="d-flex">
+            <form asp-action="@Model.ActionName" asp-controller="@Model.ControllerName" method="get" class="d-flex">
 
                 <input class="form-control me-2" id="searchkeyword" name="searchkeyword" type="search" placeholder="Search" aria-label="Search" value="@Model.SearchKeyWord" />
 

@@ -1,32 +1,26 @@
 ﻿@model PostReadViewModel
 
-
 @{
     ViewData["Title"] = "Read Post";
     PostCommentCreateDTO postCommentCreateDTO = new PostCommentCreateDTO()
-            {
-                PostId = Model.Post.Id,
-                ApplicationUserInfoId = Model.Post.ApplicationUserInfoId
-
-            };
+    {
+        PostId = Model.Post.Id,
+        ApplicationUserInfoId = Model.Post.ApplicationUserInfoId
+    };
 }
 
 
-
-<partial name="_PostRead" model=@Model.Post />
+<partial name="_PostCard" model="@Model.Post" />
 
 <div id="divShowVotes">
-    <partial name="_PostVotes" model=@Model.Votes />
+    <partial name="_PostVotes" model="@Model.Votes" />
 </div>
 
 <partial name="_CreateComment" model="@postCommentCreateDTO" />
 
 <div id="divCommentsList">
-    <partial name="_PostComments" model=@Model.Comments />
+    <partial name="_PostComments" model="@Model.Comments" />
 </div>
-
-
-<a asp-controller="Post" asp-action="MyPosts" class="btn btn-secondary">Go back to list</a>
 
 
 

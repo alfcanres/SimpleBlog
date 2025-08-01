@@ -18,5 +18,9 @@ namespace DataTransferObjects.DTO
         public int PostsPedingForPublish { init; get; }
         public int CommentsCount { init; get; }
 
+        public DateTime? LastPostDate { init; get; }
+
+        public int? LastPostId { init; get; }
+
     }
 }

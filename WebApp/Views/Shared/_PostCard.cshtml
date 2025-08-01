@@ -1,0 +1,78 @@
+﻿@model PostListDTO
+
+@if (Model != null)
+{
+
+
+    var userInitial = !string.IsNullOrWhiteSpace(Model?.UserName) ? Model.UserName.Trim()[0].ToString().ToUpper() : "A";
+
+    <div class="card mb-3" style="max-width: 540px; text-align: left">
+        <div class="row g-0">
+            <div class="col-md-4 d-flex justify-content-center pt-3">
+                <span class="user-avatar-circle">
+                    @userInitial
+                </span>
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">@Model.Title</h5>
+                    <h5 class="card-title">@Model.PostType</h5>
+                    <p class="card-text">
+
+                        <figure>
+                            <blockquote class="blockquote">
+                                <p>@Model.Text</p>
+                            </blockquote>
+                            <figcaption class="blockquote-footer">
+                                <cite title="Source Title">
+                                    @Model.UserName @if (Model.PublishDate is not null)
+                                    {
+                                        <span>@WebApp.Helpers.General.ToFriendlyDate(Model.PublishDate.Value)</span>
+                                    }
+                                                                else
+                                    {
+                                        <span>- Not published yet</span>
+                                    }
+                                </cite>
+                            </figcaption>
+                        </figure>
+
+
+                    </p>
+
+                    <p class="card-text">
+
+                        <span class="badge rounded-pill @WebApp.Helpers.General.GetPillBadgeColor(Model.PostType)">@Model.MoodType @Model.PostType</span>
+
+
+                    </p>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <button type="button"
+                                class="btn btn-primary btn-sm  btn-sm btn-show-comments"
+                                data-post-id="@Model.Id"
+                                data-bs-toggle="modal"
+                                data-bs-target="#postModal">
+                            Votes (@Model.Votes)
+                        </button>
+                        <button type="button"
+                                class="btn btn-secondary btn-sm btn-show-comments"
+                                data-post-id="@Model.Id"
+                                data-bs-toggle="modal"
+                                data-bs-target="#postModal">
+                            Comment (@Model.Comments)
+                        </button>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+
+    <h4>Post not found</h4>
+}
+

@@ -4,41 +4,58 @@
     ViewData["Title"] = "Edit Post";
 }
 
-<partial name="_ValidationSummary" model=@ViewData />
+<div class="d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow-lg border-0" style="max-width: 540px; width: 100%;">
+        <div class="card-body p-4">
+            <div class="text-center mb-4">
+                <h1 class="fw-bold mb-1 text-primary">
+                    <i class="bi bi-pencil-square me-2"></i> Edit Post
+                </h1>
+                <p class="text-muted mb-0">Update your post details below</p>
+            </div>
 
-<form asp-action="Edit" method="post">
+            <partial name="_ValidationSummary" model="@ViewData" />
 
-    <input asp-for="ApplicationUserInfoId" type="hidden" />
+            <form asp-action="Edit" method="post" autocomplete="off">
+                <input asp-for="ApplicationUserInfoId" type="hidden" />
 
-    <div class="form-group">
-        <label asp-for="Title">Title</label>
-        <input asp-for="Title" class="form-control" />
-        <span asp-validation-for="Title" class="text-danger"></span>
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label fw-semibold">Title</label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="PostTypeId" class="form-label fw-semibold">Type</label>
+                    <select asp-for="PostTypeId" asp-items="@ViewBag.PostTypes" class="form-select">
+                        <option value="">--SELECT--</option>
+                    </select>
+                    <span asp-validation-for="PostTypeId" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="MoodTypeId" class="form-label fw-semibold">Mood</label>
+                    <select asp-for="MoodTypeId" asp-items="@ViewBag.MoodTypes" class="form-select">
+                        <option value="">--SELECT--</option>
+                    </select>
+                    <span asp-validation-for="MoodTypeId" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Text" class="form-label fw-semibold">Text</label>
+                    <textarea asp-for="Text" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Text" class="text-danger small"></span>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold">
+                        <i class="bi bi-check-circle me-1"></i> Save
+                    </button>
+                    <a asp-controller="Post" asp-action="MyPosts" class="btn btn-outline-secondary px-4 py-2 fw-semibold">
+                        <i class="bi bi-x-circle me-1"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
-
-    <div class="form-group">
-        <label asp-for="PostTypeId">Type</label>
-        <select asp-for="PostTypeId" asp-items="@ViewBag.PostTypes" class="form-control">
-            <option value="">--SELECT--</option>
-        </select>
-        <span asp-validation-for="PostTypeId" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="MoodTypeId">Mood</label>
-        <select asp-for="MoodTypeId" asp-items="@ViewBag.MoodTypes" class="form-control">
-            <option value="">--SELECT--</option>
-        </select>
-        <span asp-validation-for="PostTypeId" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Text">Text</label>
-        <textarea asp-for="Text" class="form-control"></textarea>
-        <span asp-validation-for="Text" class="text-danger"></span>
-    </div>
-
-
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-controller="Post" asp-action="MyPosts" class="btn btn-secondary">Cancel</a>
-</form>
+</div>

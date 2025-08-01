@@ -1,0 +1,171 @@
+﻿@model ResponseViewModel<ResponsePagedList<PostListDTO>>
+@{
+    ViewData["Title"] = "My Posts";
+}
+
+@if (Model.Status == ResponseStatus.Success)
+{
+
+    var navBarViewModel = (NavbarViewModel)ViewBag.NavBarModel;
+
+
+    <partial name="_SearchNavbar" model="@navBarViewModel" />
+
+    if (Model.Content.List.Count() <= 0)
+    {
+        <partial name="_NoResults" />
+    }
+    else
+    {
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Type / Mood</th>
+    
+                <th scope="col">Votes / Comments</th>
+                <th scope="col"></th>
+
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col">Published</th>
+                   
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Content.List)
+                {
+                    <tr>
+                        <td>@item.Title</td>
+                        <td>
+                            <span class="badge rounded-pill @WebApp.Helpers.General.GetPillBadgeColor(item.PostType)">@item.MoodType @item.PostType</span>
+                        </td>
+
+
+
+
+                        <td>@item.Votes / @item.Comments</td>
+
+
+                        <td>
+                        <button type="button"
+                                class="btn btn-secondary btn-sm btn-show-comments"
+                                data-post-id="@item.Id"
+                                data-bs-toggle="modal"
+                                data-bs-target="#postModal">
+                                Read
+                        </button>
+                        </td>
+
+
+
+                        <td>
+
+                            <a class="btn btn-primary"
+                               asp-area=""
+                               asp-controller="Post"
+                               asp-action="Edit"
+                               asp-route-id="@item.Id">Edit</a>
+
+
+
+
+                        </td>
+                        <td>
+
+                            <a class="btn btn-danger"
+                               asp-area=""
+                               asp-controller="Post"
+                               asp-action="Delete"
+                               asp-route-id="@item.Id">Delete</a>
+
+
+                        </td>
+
+                        <td>
+                            @if (!item.IsPublished)
+                            {
+                                <a class="btn btn-danger"
+                                   asp-area=""
+                                   asp-controller="Post"
+                                   asp-action="Publish"
+                                   asp-route-id="@item.Id">Publish Now</a>
+                            }
+                            else
+                            {
+                                <span>Published  @WebApp.Helpers.General.ToFriendlyDate(item.PublishDate.Value)</span>
+
+                            }
+                        </td>
+
+
+
+
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+
+        <partial name="_Pager" model='new PagerViewModel{
+                RecordsPerPage = Model.Content.RecordsPerPage,
+                SearchKeyWord = Model.Content.SearchKeyWord,
+                PageCount = Model.Content.PageCount,
+                CurrentPage = Model.Content.CurrentPage,
+                Action = "MyPosts",
+                Controller = "Post"
+                }' />
+
+    }
+
+}
+else
+{
+    <partial name="_ErrorAlert" model="@Model.MessageList" />
+}
+
+
+
+        @section Scripts {
+    <script>
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.body.addEventListener('click', async function (e) {
+                if (e.target.classList.contains('btn-show-comments')) {
+                    const postId = e.target.getAttribute('data-post-id');
+                    const modalBody = document.getElementById('postModalBody');
+                    modalBody.innerHTML = '<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>';
+                    try {
+                        const response = await fetch('@Url.Action("View", "Post")/' + postId, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                        if (response.ok) {
+                            const html = await response.text();
+                            modalBody.innerHTML = html;
+                        } else {
+                            modalBody.innerHTML = '<div class="alert alert-danger">Failed to load post details.</div>';
+                        }
+                    } catch {
+                        modalBody.innerHTML = '<div class="alert alert-danger">Failed to load post details.</div>';
+                    }
+                }
+            });
+        });
+    </script>
+}
+
+<div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="postModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="postModalBody">
+                <div class="text-center p-5">
+                    <div class="spinner-border" role="status"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

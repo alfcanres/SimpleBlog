@@ -1,15 +1,16 @@
-﻿using DataTransferObjects.DTO;
-using DataTransferObjects;
-using Microsoft.AspNetCore.Mvc;
-using WebAPI.Client.Repository.Post;
-using WebAPI.Client.ViewModels;
-using WebAPI.Client.Repository.PostType;
-using WebAPI.Client.Repository.MoodType;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using WebAPI.Client.Repository.ApplicationUserInfo;
-using WebAPI.Client.Repository;
-using WebApp.Models;
+﻿using DataTransferObjects;
+using DataTransferObjects.DTO;
 using DataTransferObjects.DTO.PostVote;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Reflection;
+using WebAPI.Client.Repository;
+using WebAPI.Client.Repository.ApplicationUserInfo;
+using WebAPI.Client.Repository.MoodType;
+using WebAPI.Client.Repository.Post;
+using WebAPI.Client.Repository.PostType;
+using WebAPI.Client.ViewModels;
+using WebApp.Models;
 
 
 
@@ -62,30 +63,32 @@ namespace WebApp.Controllers
             return View(response);
         }
 
+        public async Task<IActionResult> LoadMore(int page = 1, int recordsPerPage = 10, string searchKeyWord = null)
+        {
+            var pager = new PagerParams { CurrentPage = page };
+            
+            var response = await _repository.GetPublishedPagedAsync(pager);
+
+            if (response.Status == ResponseStatus.Unauthorized)
+                return Unauthorized();
+
+        
+            return PartialView("_PostLoadMore", response.Content.List);
+        }
+
         public async Task<IActionResult> MyPosts(PagerParams pager = null)
         {
 
-            ViewBag.Action = "MyPosts";
-            ViewBag.IsAuthor = true;
-
             var response = await _repository.GetAllPagedByUserAsync(_currentUserID, pager);
 
-            if (response.Status == ResponseStatus.Unauthorized)
+            ViewBag.NavBarModel = new NavbarViewModel
             {
-                return RedirectToAction("Logout", "Account");
-            }
-
-            return View("List", response);
-        }
-
-
-        public async Task<IActionResult> List(int userId, PagerParams pager = null)
-        {
-
-            ViewBag.Action = "List";
-            ViewBag.IsAuthor = false;
-
-            var response = await _repository.GetPublishedPagedByUserAsync(userId, pager);
+                RecordsPerPage = response.Content.RecordsPerPage,
+                SearchKeyWord = response.Content.SearchKeyWord,
+                ShowCreateNewButton = true,
+                ActionName = "MyPosts",
+                ControllerName = "Post"
+            };
 
             if (response.Status == ResponseStatus.Unauthorized)
             {
@@ -224,7 +227,7 @@ namespace WebApp.Controllers
 
             if (response.Status == ResponseStatus.Success)
             {
-                return RedirectToAction("Index", "Post");
+                return RedirectToAction("MyPosts", "Post");
             }
             else
             {
@@ -263,15 +266,29 @@ namespace WebApp.Controllers
                 return RedirectToAction("Logout", "Account");
             }
 
+            var post = postResp.Content;
+
             var postReadviewModel = new PostReadViewModel()
             {
-                Post = postResp.Content,
+                Post = new PostListDTO
+                {
+                    ApplicationUserInfoId = post.ApplicationUserInfoId,
+                    Id = post.Id,
+                    Title = post.Title,
+                    Text = post.Text,
+                    UserName = post.UserName,
+                    ProfilePic = post.ProfilePic,
+                    PostType = post.PostType,
+                    MoodType = post.MoodType,
+                    PublishDate = post.PublishDate,
+                    IsPublished = post.IsPublished
+                },
                 Comments = commentsResp.Content.List,
                 Votes = votesResp.Content
             };
 
 
-            return View(postReadviewModel);
+            return PartialView(postReadviewModel);
         }
 
         public async Task<IActionResult> Delete(int id)
@@ -302,7 +319,7 @@ namespace WebApp.Controllers
 
             if (response.Status == ResponseStatus.Success)
             {
-                return RedirectToAction("Index", "Post");
+                return RedirectToAction("MyPosts", "Post");
             }
             else
             {

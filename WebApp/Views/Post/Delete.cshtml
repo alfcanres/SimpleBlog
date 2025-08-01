@@ -1,20 +1,37 @@
 ﻿@model PostReadDTO
 
+@using WebApp.Helpers
+
 @{
     ViewData["Title"] = "Delete Post";
+
+    string friendlyDate = "Wating to be published";
+    if (Model.PublishDate != null)
+        friendlyDate = General.ToFriendlyDate(Model.PublishDate.Value);
 }
 
-<div>
-    Are you sure you want to delete this?
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow" style="max-width: 500px; width: 100%;">
+        <div class="card-body">
+            <h4 class="card-title text-danger mb-4 text-center">Are you sure you want to delete this?</h4>
+
+            <partial name="_ValidationSummary" model="@ViewData" />
+
+            <form asp-action="Delete" method="post">
+                <div class="mb-3">
+                    <span class="fw-bold">@Model.Title</span>
+                </div>
+                <div class="mb-3">
+                    <span>@Model.Text</span>
+                </div>
+                <div class="mb-4 text-muted">
+                    <small>Published: @friendlyDate</small>
+                </div>
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <a asp-controller="Post" asp-action="MyPosts" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
-
-<partial name="_ValidationSummary" model=@ViewData />
-
-<form asp-action="Delete" method="post">
-
-    <partial name="_PostRead" model=@Model />
-
-
-    <button type="submit" class="btn btn-danger">Delete</button>
-    <a asp-controller="Post" asp-action="MyPosts" class="btn btn-secondary">Cancel</a>
-</form>

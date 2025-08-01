@@ -159,7 +159,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseDataInitializer(); //Create initial data in development mode. Just run once, then comment
+    //app.UseDataInitializer(); //Create initial data in development mode. Just run once, then comment
 }
 
 app.UseHttpsRedirection();
