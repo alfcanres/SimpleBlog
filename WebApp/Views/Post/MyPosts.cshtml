@@ -48,11 +48,13 @@
 
 
                         <td>
-                            <a class="btn btn-primary"
-                               asp-area=""
-                               asp-controller="Post"
-                               asp-action="View"
-                               asp-route-id="@item.Id">View</a>
+                        <button type="button"
+                                class="btn btn-secondary btn-sm btn-show-comments"
+                                data-post-id="@item.Id"
+                                data-bs-toggle="modal"
+                                data-bs-target="#postModal">
+                                Read
+                        </button>
                         </td>
 
 
@@ -123,3 +125,47 @@ else
     <partial name="_ErrorAlert" model="@Model.MessageList" />
 }
 
+
+
+        @section Scripts {
+    <script>
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.body.addEventListener('click', async function (e) {
+                if (e.target.classList.contains('btn-show-comments')) {
+                    const postId = e.target.getAttribute('data-post-id');
+                    const modalBody = document.getElementById('postModalBody');
+                    modalBody.innerHTML = '<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>';
+                    try {
+                        const response = await fetch('@Url.Action("View", "Post")/' + postId, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                        if (response.ok) {
+                            const html = await response.text();
+                            modalBody.innerHTML = html;
+                        } else {
+                            modalBody.innerHTML = '<div class="alert alert-danger">Failed to load post details.</div>';
+                        }
+                    } catch {
+                        modalBody.innerHTML = '<div class="alert alert-danger">Failed to load post details.</div>';
+                    }
+                }
+            });
+        });
+    </script>
+}
+
+<div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="postModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="postModalBody">
+                <div class="text-center p-5">
+                    <div class="spinner-border" role="status"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

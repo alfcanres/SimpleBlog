@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text;
 using System.Text.Json;
+using WebAPI.Client.Helpers;
 using WebAPI.Client.Options;
 using WebAPI.Client.ViewModels;
 
@@ -103,7 +104,7 @@ namespace WebAPI.Client.Repository.Account
                         );
 
                     responseViewModel.Content = true;
-                    responseViewModel.Status = ResponseStatus.Success;  
+                    responseViewModel.Status = ResponseStatus.Success;
 
                 }
                 else
@@ -178,5 +179,9 @@ namespace WebAPI.Client.Repository.Account
             return responseView;
         }
 
+        public Task<ResponseViewModel<bool>> UpdatePasswordAsync(AccountChangePasswordDTO model)
+        {
+            throw new NotImplementedException("UpdatePasswordAsync method is not implemented yet.");
+        }
     }
 }

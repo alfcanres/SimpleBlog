@@ -118,7 +118,7 @@ namespace WebAPI.Controllers
 
         [ResponseCache(Duration = 10)]
         [HttpGet("GetByEmail/{email}")]
-        public async Task<ActionResult> GetByEmail([FromQuery] string email)
+        public async Task<ActionResult> GetByEmail(string email)
         {
             try
             {

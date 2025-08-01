@@ -11,13 +11,13 @@ namespace WebApp.Controllers
     public class AuthorsController : Controller
     {
         private readonly IApplicationUserInfoRepository _repository;
-        private readonly ILogger<ApplicationUserInfoController> _logger;
+        private readonly ILogger<AuthorsController> _logger;
         private readonly IPostRepository _postRepository;
 
         public AuthorsController(
             IApplicationUserInfoRepository repository,
             IPostRepository postRepository,
-            ILogger<ApplicationUserInfoController> logger)
+            ILogger<AuthorsController> logger)
         {
             _repository = repository;
             _logger = logger;
