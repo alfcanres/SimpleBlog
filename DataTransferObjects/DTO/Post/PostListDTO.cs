@@ -10,7 +10,9 @@ namespace DataTransferObjects.DTO
         public string ProfilePic { init; get; }
         public string PostType { get; init; }
         public string MoodType { get; init; }
-        public string Title { init; get; } 
+        public string Title { init; get; }
+
+        public string Text { init; get; }
         public DateTime CreationDate { get; set; }
         public Nullable<DateTime> PublishDate { get; set; }
         public bool IsPublished { get; set; }

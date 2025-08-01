@@ -1,0 +1,35 @@
+﻿@model ApplicationUserInfoListDTO
+
+
+
+<div class="author-card">
+    <div class="author-avatar">
+        @WebApp.Helpers.General.GetInitialFromUser(@Model.FullName)
+    </div>
+    <div class="author-name">@Model.FullName</div>
+    <div class="author-posts">
+        @Model.PostsCount @((Model.PostsCount == 1) ? "post" : "posts")
+    </div>
+    @if (Model.PostsCount > 0 && Model.LastPostDate != null)
+    {
+        <div class="author-lastpost">
+            Last post: @WebApp.Helpers.General.ToFriendlyDate(Model.LastPostDate.Value)
+        </div>
+    }
+    else
+    {
+        <div class="author-lastpost">
+            No posts yet
+        </div>
+    }
+    <div class="author-actions">
+
+        <a class="btn btn-primary btn-sm"
+           asp-area=""
+           asp-controller="Authors"
+           asp-action="View"
+           asp-route-userId="@Model.Id">
+            View Profile
+        </a>
+    </div>
+</div>

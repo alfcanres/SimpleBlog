@@ -2,11 +2,9 @@
 
     $("#loadingSpinner").show();
 }
-
 function hideLoadingSpinner() {
     $("#loadingSpinner").hide();
 }
-
 function fnRefreshComments(postId) {
     const divCommentsList = document.getElementById("divCommentsList");
     const url = '/Post/ListComments?postId=' + postId;
@@ -26,7 +24,6 @@ function fnRefreshComments(postId) {
 
     hideLoadingSpinner();
 }
-
 function fnCreateComment() {
     const commentForm = document.getElementById("CommentForm");
     const commentText = commentForm.elements["CommentText"];
@@ -86,7 +83,6 @@ function fnCreateComment() {
     }
 
 }
-
 function fnShowCommentValidator(messages) {
     const validationSummary = document.getElementById("CommentValidationSummary");
     validationSummary.innerHTML = ""; 
@@ -98,14 +94,12 @@ function fnShowCommentValidator(messages) {
     });
     $("#divValidationSummaryContainer").show();
 }
-
 function fnHideCommentValidator() {
     const validationSummary = document.getElementById("CommentValidationSummary");
     validationSummary.innerHTML = "";
     $("#divValidationSummaryContainer").hide();
 
 }
-
 function fnSubmitVote(vote) {
 
 
@@ -145,8 +139,6 @@ function fnSubmitVote(vote) {
 
     hideLoadingSpinner();
 }
-
-
 function fnRefreshVoteCount(postId) {
     const divCommentsList = document.getElementById("divShowVotes");
     const url = '/Post/ShowVotes?postId=' + postId;
@@ -166,3 +158,4 @@ function fnRefreshVoteCount(postId) {
 
     hideLoadingSpinner();
 }
+

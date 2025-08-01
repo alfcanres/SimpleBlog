@@ -7,8 +7,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\ApplicationUserInfo\**" />
+    <Content Remove="Views\ApplicationUserInfo\**" />
+    <EmbeddedResource Remove="Views\ApplicationUserInfo\**" />
+    <None Remove="Views\ApplicationUserInfo\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\ApplicationUserInfoController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Views\Post\_ByAuthor.cshtml" />
+    <Content Remove="Views\Post\_PostCard.cshtml" />
+    <Content Remove="Views\Post\_PostLoadMore.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.25" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.18" />
     <PackageReference Include="System.Net.Http.Json" Version="6.0.1" />
   </ItemGroup>
 
@@ -22,10 +40,6 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Views\ApplicationUserInfo\" />
   </ItemGroup>
 
 </Project>

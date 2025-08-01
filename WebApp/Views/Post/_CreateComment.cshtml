@@ -2,30 +2,38 @@
 
 @{
     ViewData["Title"] = "Create Comment";
+    // Use a default image if the user's profile picture is not available
+    var userProfileImage = ViewBag.UserProfileImage as string ?? Url.Content("~/images/default_user.png");
 }
 
+<style>
+ 
+</style>
+
 <div class="alert alert-danger" style="display:none;" id="divValidationSummaryContainer">
-    <ul id="CommentValidationSummary">
-
-  
-    </ul>
+    <ul id="CommentValidationSummary"></ul>
 </div>
-<h1>Submit Comment</h1>
 
-<form asp-action="CreateComment" method="post" id="CommentForm">
+@{
+    var userInitial = !string.IsNullOrWhiteSpace(User.Identity?.Name) ? User.Identity.Name.Trim()[0].ToString().ToUpper() : "U";
 
-    <input type="hidden" asp-for="PostId" id="PostId" />
+}
 
-    <input type="hidden" asp-for="ApplicationUserInfoId" id="ApplicationUserInfoId" />
-
-
-    <div class="form-group">
-        <label asp-for="CommentText">Text</label>
-        <textarea asp-for="CommentText" class="form-control" id="CommentText"></textarea>
-        <span asp-validation-for="CommentText" class="text-danger" id="CommentTextValidate"></span>
-    </div>
+<div class="comment-box-container">
+    
 
 
-    <button type="button" class="btn btn-primary" onclick="fnCreateComment();" id="btnSubmitComment">Submit Comment</button>
+    <span style="width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#6366f1;color:#fff;font-weight:600;font-size:1.1rem;margin-right:0.5rem;">
+        @userInitial
+    </span>
 
-</form>
+    <form asp-action="CreateComment" method="post" id="CommentForm" class="comment-form-area">
+        <input type="hidden" asp-for="PostId" id="PostId" />
+        <input type="hidden" asp-for="ApplicationUserInfoId" id="ApplicationUserInfoId" />
+
+        <textarea asp-for="CommentText" class="comment-textarea" id="CommentText" placeholder="Write a comment..."></textarea>
+        <span asp-validation-for="CommentText" class="comment-validation" id="CommentTextValidate"></span>
+
+        <button type="button" class="comment-submit-btn" onclick="fnCreateComment();" id="btnSubmitComment">Comment</button>
+    </form>
+</div>

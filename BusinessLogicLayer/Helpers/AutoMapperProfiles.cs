@@ -64,6 +64,7 @@ namespace BusinessLogicLayer.Helpers
             CreateMap<PostComment, PostCommentReadDTO>()
                 .ForMember(t => t.ProfilePicture, t => t.MapFrom(m => m.ApplicationUserInfo.ProfilePicture))
                 .ForMember(t => t.UserName, t => t.MapFrom(m => m.ApplicationUserInfo.UserName))
+                .ForMember(t => t.CommentDate, t => t.MapFrom(m => DateTime.Now))
                 .ReverseMap();
 
         }

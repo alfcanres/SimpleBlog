@@ -1,26 +1,34 @@
 ﻿@model PostVoteViewDTO
 
-@if(Model != null)
+@if (Model != null)
 {
+    
+
+        <div id="voteContainer" class="d-flex justify-content-end gap-2 my-2">
+
+            <input type="hidden" id="votePostId" name="votePostId" value="@Model.PostId" />
+            <button onclick="fnSubmitVote(true);" type="button" class="btn btn-outline-success btn-sm">
+                <span><i class="bi bi-hand-thumbs-up-fill"></i></span>
+                <span>Like</span>
+                <span>@Model.Like</span>
+            </button>
 
 
-    <input type="hidden" id="votePostId" name="votePostId" value="@Model.PostId" />
-
-    <button onclick="fnSubmitVote(true);" type="button" class="btn btn-success position-relative">
-        Likes
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            @Model.Like
-            <span class="visually-hidden">unread messages</span>
-        </span>
-    </button>
+            <button onclick="fnSubmitVote(false);" type="button" class="btn btn-outline-danger btn-sm">
+                <span><i class="bi bi-hand-thumbs-up-fill"></i></span>
+                <span>Dislike</span>
+                <span>@Model.Dislike</span>
+            </button>
 
 
-    <button onclick="fnSubmitVote(false);" type="button" class="btn btn-warning position-relative">
-        Dislikes
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            @Model.Dislike
-            <span class="visually-hidden">unread messages</span>
-        </span>
-    </button>
+        </div>
+
+
+
+
+
+
+
+
 }
 

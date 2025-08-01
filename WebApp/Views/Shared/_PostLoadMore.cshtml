@@ -1,0 +1,12 @@
+﻿@model IEnumerable<PostListDTO>
+@foreach (var item in Model)
+{
+    <tr>
+
+        <td class="text-center align-middle">
+            <div style="display: inline-block;">
+                <partial name="_PostCard" model="@item" />
+            </div>
+        </td>
+    </tr>
+}

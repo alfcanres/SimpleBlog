@@ -1,0 +1,5 @@
+@model IEnumerable<ApplicationUserInfoListDTO>
+@foreach (var item in Model)
+{
+    <partial name="_AuthorCard" model="item" />
+}

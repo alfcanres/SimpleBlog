@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using DataTransferObjects.DTO;
-using WebAPI.Client.Repository.Account;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using DataTransferObjects.DTO;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using WebAPI.Client.ViewModels;
 using WebAPI.Client.Repository;
+using WebAPI.Client.Repository.Account;
+using WebAPI.Client.Repository.ApplicationUserInfo;
+using WebAPI.Client.ViewModels;
 
 
 namespace WebApp.Controllers
@@ -15,14 +17,16 @@ namespace WebApp.Controllers
 
         private readonly ILogger<AccountController> _logger;
         private readonly IAccountRepository _accountRepository;
+        private readonly IApplicationUserInfoRepository _applicationUserInfoRepository;
         private readonly IJwtTokenAuthenticationHandler _jwtTokenAuthenticationHandler;
 
 
-        public AccountController(ILogger<AccountController> logger, IAccountRepository accountRepository, IJwtTokenAuthenticationHandler jwtTokenAuthenticationHandler)
+        public AccountController(ILogger<AccountController> logger, IAccountRepository accountRepository, IJwtTokenAuthenticationHandler jwtTokenAuthenticationHandler, IApplicationUserInfoRepository applicationUserInfoRepository)
         {
             _logger = logger;
             _accountRepository = accountRepository;
             _jwtTokenAuthenticationHandler = jwtTokenAuthenticationHandler;
+            _applicationUserInfoRepository = applicationUserInfoRepository;
         }
 
 
@@ -113,6 +117,7 @@ namespace WebApp.Controllers
             return View();
         }
 
+        [Authorize(AuthenticationSchemes = "Cookies")]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -121,5 +126,119 @@ namespace WebApp.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+
+        [Authorize(AuthenticationSchemes = "Cookies")]
+        public async Task<IActionResult> EditProfile()
+        {
+            var userEmail = User.Identity?.Name;
+            
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var response = await _applicationUserInfoRepository.GetByEmailAsync(userEmail);
+            
+            if (response.Status ==  ResponseStatus.Unauthorized)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            return View(response.Content);
+        }
+
+        [Authorize(AuthenticationSchemes = "Cookies")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProfile(ApplicationUserInfoUpdateDTO updateDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(updateDTO);
+            }
+
+            var userEmail = User.Identity?.Name;
+
+            if(userEmail != updateDTO.UserName)
+            {
+                ModelState.AddModelError(string.Empty, "Email mismatch.");
+                return View(updateDTO);
+            }
+            
+
+            var response = await _applicationUserInfoRepository.UpdateAsync(updateDTO);
+
+            if (response.Status == ResponseStatus.Unauthorized)
+            {
+                return RedirectToAction("Logout", "Account");
+            }
+
+            if (response.Status == ResponseStatus.Success)
+            {
+                return RedirectToAction("Index", "MoodType");
+            }
+            else
+            {
+                foreach (var error in response.MessageList)
+                {
+                    ModelState.AddModelError(string.Empty, error);
+                }
+
+                return View(updateDTO);
+            }
+        }
+
+
+        [Authorize(AuthenticationSchemes = "Cookies")]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+
+        [Authorize(AuthenticationSchemes = "Cookies")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(AccountChangePasswordDTO model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var userEmail = User.Identity?.Name;
+
+            if (userEmail != model.Email)
+            {
+                ModelState.AddModelError(string.Empty, "Email mismatch.");
+                return View(model);
+            }
+
+
+            var response = await _accountRepository.UpdatePasswordAsync(model);
+
+            if (response.Status == ResponseStatus.Unauthorized)
+            {
+                return RedirectToAction("Logout", "Account");
+            }
+
+            if (response.Status == ResponseStatus.Success)
+            {
+                return RedirectToAction("Index", "MoodType");
+            }
+            else
+            {
+                foreach (var error in response.MessageList)
+                {
+                    ModelState.AddModelError(string.Empty, error);
+                }
+
+                return View(model);
+            }
+        }
+
+
+
     }
 }

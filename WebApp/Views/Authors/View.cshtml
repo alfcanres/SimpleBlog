@@ -1,4 +1,12 @@
-﻿@model DataTransferObjects.DTO.ApplicationUserInfoReadDTO
+﻿@model AuthorViewModel
+@{
+    var author = Model.Author;
+    var pagedPosts = Model.PostsPagedList;
+    int currentPage = pagedPosts.CurrentPage;
+    int pageCount = pagedPosts.PageCount;
+    int userId = author.Id;
+}
+
 
 <div class="container mt-5">
     <div class="row justify-content-center">
@@ -12,9 +20,9 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex flex-column align-items-center mb-4">
-                        @if (!string.IsNullOrEmpty(Model.ProfilePicture))
+                        @if (!string.IsNullOrEmpty(author.ProfilePicture))
                         {
-                            <img src="@Model.ProfilePicture" alt="Profile Picture" class="rounded-circle mb-2" style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #0d6efd;" />
+                            <img src="@author.ProfilePicture" alt="Profile Picture" class="rounded-circle mb-2" style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #0d6efd;" />
                         }
                         else
                         {
@@ -22,20 +30,137 @@
                                 <span class="text-white-50">No Picture</span>
                             </div>
                         }
-                        <h5 class="mb-0">@Model.UserName</h5>
-                        <a href="@Url.Action("List", "Post", new { userId = Model.Id })" class="btn btn-outline-primary mt-3">
-                            <i class="bi bi-list"></i> List author's posts
-                        </a>
+                        <h5 class="mb-0">@author.UserName</h5>
                     </div>
                     <dl class="row mb-0">
                         <dt class="col-sm-5">First Name</dt>
-                        <dd class="col-sm-7">@Model.FirstName</dd>
+                        <dd class="col-sm-7">@author.FirstName</dd>
 
                         <dt class="col-sm-5">Last Name</dt>
-                        <dd class="col-sm-7">@Model.LastName</dd>
+                        <dd class="col-sm-7">@author.LastName</dd>
                     </dl>
                 </div>
             </div>
         </div>
     </div>
+
+
+
+    <div id="loadingSpinner" style="display:none;text-align:center;">
+        <div class="spinner-border" role="status"></div>
+    </div>
+
+
+   
+    <h1 class="text-center mb-4">Published Posts</h1>
+
+    @if (pagedPosts.List.Count() <= 0)
+    {
+        <partial name="_NoResults" />
+    }
+    else
+    {
+        <table class="table table-borderless">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody id="post-list-body">
+                @foreach (var item in pagedPosts.List)
+                {
+                    <tr>
+                        <td class="text-center align-middle">
+                            <div style="display: inline-block;">
+                                <partial name="_PostCard" model="@item" />
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    }
+
+
+
 </div>
+
+<div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="postModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="postModalBody">
+                <div class="text-center p-5">
+                    <div class="spinner-border" role="status"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script>
+        let currentPage = @currentPage;
+        const pageCount = @pageCount;
+        let loading = false;
+
+        console.log('Script');
+
+        window.onscroll = async function() {
+
+
+
+
+
+            if (loading) return;
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) {
+                if (currentPage >= pageCount) return;
+                loading = true;
+                currentPage++;
+                document.getElementById('loadingSpinner').style.display = 'block';
+                try {
+                ;
+
+                    const response = await fetch('@Url.Action("LoadMorePosts", "Authors")?userId=' + @userId + '&page=' + currentPage);
+                    if (response.ok) {
+
+           
+
+                        const html = await response.text();
+                        document.getElementById('post-list-body').insertAdjacentHTML('beforeend', html);
+                    }
+                } finally {
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    loading = false;
+                }
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.body.addEventListener('click', async function (e) {
+                if (e.target.classList.contains('btn-show-comments')) {
+                    const postId = e.target.getAttribute('data-post-id');
+                    const modalBody = document.getElementById('postModalBody');
+                    modalBody.innerHTML = '<div class="text-center p-5"><div class="spinner-border" role="status"></div></div>';
+                    try {
+                        const response = await fetch('@Url.Action("View", "Post")/' + postId, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                        if (response.ok) {
+                            const html = await response.text();
+                            modalBody.innerHTML = html;
+                        } else {
+                            modalBody.innerHTML = '<div class="alert alert-danger">Failed to load post details.</div>';
+                        }
+                    } catch {
+                        modalBody.innerHTML = '<div class="alert alert-danger">Failed to load post details.</div>';
+                    }
+                }
+            });
+        });
+    </script>
+}
+
